@@ -1,10 +1,7 @@
-const moongose = require('mongoose')
+const mongoose = require('mongoose')
 
-moongose.connect('mongodb://127.0.0.1:27017/task-manager-api',{
-    useUnifiedTopology: true,
+mongoose.connect('mongodb://127.0.0.1:27017/task-manager-api', {
+    useNewUrlParser: true,
     useCreateIndex: true,
-    useNewUrlParser: false,
-    useFindAndModify: false,
-    useNewUrlParser: true
+    useFindAndModify: false
 })
-

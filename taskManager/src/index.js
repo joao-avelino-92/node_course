@@ -1,81 +1,41 @@
-const express = require ('express')
+const express = require('express')
 require('./db/mongoose')
-const User = require('./models/user')
-const Tasks = require('./models/tasks')
+const userRouter = require('./routers/user')
+const taskRouter = require('./routers/task')
 
 const app = express()
-const port = process.env.PORT || 3000 
+const port = process.env.PORT || 3000
+
+// app.use((req, res, next) => {
+//     if (req.method === 'GET'){
+//         res.send('GET resquests are disable')
+//     } else {
+//         next()
+//     }
+// })
+
+app.use((req, res) => {
+    res.status(503).send('Site is currently down. Check back soon!')
+})
+
 
 app.use(express.json())
-
-app.post('/users', async (req, res) => {
-    const user = new User(req.body)
-
-    try {
-        await user.save()
-        res.status(201).send(user)
-    } catch (e) {
-        res.status(400).send(e)
-    }
-})
-
-app.get('/users', async (req, res) => {
-    try {
-        const user =  await User.find({})
-        res.send(user)
-    }catch (e) {
-        res.status(500).send(e)
-    }
-})
-
-app.get('/users/:id', async (req, res) => {
-    const _id = req.params.id
-    try{
-        const user = await User.findById(_id)
-        if (!user) {
-            return res.status(404).send()
-        }
-        res.send(user)
-    } catch (e) {
-        res.status(500).send()
-    }
-})
-
-app.post('/tasks', async (req, res) => {
-    const tasks = new Tasks(req.body)
-    try {
-        await tasks.save()
-        res.status(201).send(tasks)
-    } catch (e) {
-        res.status(400).send(e)
-    }
-})
-
-app.get('/tasks', async (req, res) => {
-
-    try{
-        const tasks = await Tasks.find({})
-        res.send(tasks)
-    } catch (e) {
-        res.status(500).send()
-    }
-})
-
-app.get('/tasks/:id', async (req, res) => {
-    const _id = req.params.id   
-
-    try {
-        const tasks = await Tasks.findById(_id)
-        if (!tasks) {
-            return res.status(404).send()
-        }
-        res.send(tasks)
-    } catch (e) {
-        res.status(500).send()
-    }
-})
-
+app.use(userRouter)
+app.use(taskRouter)
 
 app.listen(port, () => {
-    console.log('Server is up on port '+port)
+    console.log('Server is up on port ' + port)
 })
+
+const jwt = require('jsonwebtoken')
+
+const myFunction = async () =>{
+
+    const token = jwt.sign({ _id: 'abc123' }, 'This is my new course', { expiresIn: '30 minutes' })
+    console.log(token)
+   
+    const data = jwt.verify(token, 'This is my new course')
+    console.log(data)
+}
+
+myFunction()
